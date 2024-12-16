@@ -1,6 +1,7 @@
 package com.RestApiWithOutDb.RestApiWithOutDb.controller;
 
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Course;
+import com.RestApiWithOutDb.RestApiWithOutDb.model.Lesson;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Users;
 import com.RestApiWithOutDb.RestApiWithOutDb.service.Services;
 
@@ -77,6 +78,8 @@ public class RestControllers {
         return services.updateServices(user.getId(), user);
     }
 
+    //======================================================
+
     // Add a new course
     @PostMapping("/createCourse")
     public String createCourse(@RequestBody Course course) {
@@ -112,6 +115,24 @@ public class RestControllers {
     public String deleteCourse(@RequestParam int id){
             services.deleteCourse(id);
             return "delete Successfully";
+    }
+
+    @PostMapping("/{courseId}/addMedia")
+    public String addMediaFile(@PathVariable int courseId, @RequestParam String mediaFile) {
+        boolean res = services.addMediaFile(courseId, mediaFile);
+        if (!res) {
+            return "The course is not exist!";
+        }
+        return "Media added Successfully";
+    }
+
+    @PostMapping("/{courseId}/addLesson")
+    public String addLesson(@PathVariable int courseId, @RequestBody Lesson lesson) {
+        boolean res = services.addLesson(courseId, lesson);
+        if (!res) {
+            return "The course is not exist!";
+        }
+        return "Lesson added Successfully";
     }
 
 }

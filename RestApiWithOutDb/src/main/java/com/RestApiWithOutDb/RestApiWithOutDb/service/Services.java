@@ -8,20 +8,22 @@ import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Course;
+import com.RestApiWithOutDb.RestApiWithOutDb.model.Lesson;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Users;
 
 
 @Component
 public class Services {
     private static int idCounter = 1;
-     private List<Users> userslist = new ArrayList<>();
+    private static int lessonCounter = 1;
+    private List<Users> userslist = new ArrayList<>();
     private List<Course> courseslist = new ArrayList<>();
 ;
 
 
     public Services( ) {
 
-        courseslist.add( new Course(idCounter++, "Mathematics", "A math course", new HashSet<>()));
+        courseslist.add( new Course(idCounter++, "Mathematics", "A math course", "36 hours",  new HashSet<>()));
        userslist.add(new Users(idCounter++, "john_doe", "password123", "student", "john@example.com",new HashSet<>()));
     }
 
@@ -168,13 +170,37 @@ public class Services {
 
     }
 
-public List<Users> getAllUsers()
-{
-    return userslist;
-}
-public List<Course> getAllCourses()
-{
-    return courseslist;
-}
+    public List<Users> getAllUsers()
+    {
+        return userslist;
+    }
+    public List<Course> getAllCourses()
+    {
+        return courseslist;
+    }
+
+    public boolean addMediaFile(int courseId, String mediaFile) {
+        
+        for(Course course : courseslist){
+            if(courseId == course.getId()){
+                course.addMediaFile(mediaFile);
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    public boolean addLesson(int courseId, Lesson lesson) {
+        for(Course course : courseslist){
+            if(courseId == course.getId()){
+                lesson.setId(lessonCounter++);
+                course.addLesson(lesson);
+                return true;
+            }
+        }
+        return false;
+    }
+
 
 }

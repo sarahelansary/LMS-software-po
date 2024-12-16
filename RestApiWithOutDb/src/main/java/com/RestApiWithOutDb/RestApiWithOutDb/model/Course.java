@@ -1,5 +1,8 @@
 package com.RestApiWithOutDb.RestApiWithOutDb.model;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -13,17 +16,31 @@ import lombok.Setter;
 @Data
 @Getter
 @Setter
-@AllArgsConstructor
+//@AllArgsConstructor
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Course {
+    
     private Integer id;
     private String name;
     private String description;
-    
+    private String duration;
+
+    private List<String> mediaFiles;
+    private List<Lesson> lessons;
    
-    private   Set<Users> students;
+    private Set<Users> students;
 
+    public Course(Integer id, String name, String description, String duration, Set<Users> students) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.duration = duration;
+        this.students = students;
 
+        this.mediaFiles = new ArrayList<>();
+        this.lessons = new ArrayList<>();
+    }
+    
     
     public Integer getId() { return id; }
     public String getName() { return name; }
@@ -32,7 +49,10 @@ public class Course {
     public void setDescription(String description) { this.description = description; }
     public Set<Users> getStudents() { return students; }
     public void setStudents(Set<Users> students) { this.students = students; }
-    
 
+    public List<String> getMediaFiles() { return mediaFiles; }
+    public void addMediaFile(String mediaFile) { this.mediaFiles.add(mediaFile); }
+    public List<Lesson> getLessons() { return lessons; }
+    public void addLesson(Lesson lesson) { this.lessons.add(lesson); }
     
 }
