@@ -101,9 +101,17 @@ public class RestControllers {
         return services.getAllCourses();
     }
 
+
     // Assign a user to a course
     @PostMapping("/addUserToCourse")
     public String addUserToCourse(@RequestParam Integer userId, @RequestParam Integer courseId) {
         return services.addUserToCourse(userId, courseId);
     }
+
+    @DeleteMapping("/deleteCourse")
+    public String deleteCourse(@RequestParam int id){
+            services.deleteCourse(id);
+            return "delete Successfully";
+    }
+
 }

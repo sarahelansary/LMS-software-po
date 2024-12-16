@@ -24,18 +24,11 @@ public class Services {
         courseslist.add( new Course(idCounter++, "Mathematics", "A math course", new HashSet<>()));
        userslist.add(new Users(idCounter++, "john_doe", "password123", "student", "john@example.com",new HashSet<>()));
     }
-    public String hello(){
-        return ("<h1> sucess</h1>");
-    }
 
-    //register   //register
-    //    public String createServices(Users student){
-    //
-    //        student.setId(idCounter++);
-    //        userslist.add(student);
-    //        return "Successfully created";
-    //
-    //    }
+    public String hello(){
+        return ("<h1> sucess</h1>");}
+
+
     public String createServices (Users user) {
         Optional<Users> existingUser = userslist.stream()
                 .filter(u -> u.getEmail().equals(user.getEmail()))
@@ -48,7 +41,7 @@ public class Services {
         user.setId(idCounter++);
 
         userslist.add(user);
-        return "User successfully registered!";
+        return "User successfully registered with ID: " + user.getId();
     }
 
     // Authenticate user
@@ -131,6 +124,20 @@ public class Services {
 
 
     }
+
+    public String deleteCourse(int id)
+    {
+        for(Course s : courseslist){
+            if(s.getId()==id){
+                courseslist.remove(s);
+                return "Successfully deleted course";
+            }
+        }
+        throw new IllegalArgumentException("course not found");
+
+
+    }
+
 
     //update
 
