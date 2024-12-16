@@ -3,6 +3,7 @@ package com.RestApiWithOutDb.RestApiWithOutDb.service;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
@@ -15,20 +16,55 @@ public class Services {
     private static int idCounter = 1;
      private List<Users> userslist = new ArrayList<>();
     private List<Course> courseslist = new ArrayList<>();
+;
 
 
-    public Services() {
-       courseslist.add( new Course(idCounter++, "Mathematics", "A math course", new HashSet<>()));
+    public Services( ) {
+
+        courseslist.add( new Course(idCounter++, "Mathematics", "A math course", new HashSet<>()));
        userslist.add(new Users(idCounter++, "john_doe", "password123", "student", "john@example.com",new HashSet<>()));
     }
-
-    //register
-    public String createServices(Users student){
-        student.setId(idCounter++);
-        userslist.add(student);
-        return "Successfully created";
-
+    public String hello(){
+        return ("<h1> sucess</h1>");
     }
+
+    //register   //register
+    //    public String createServices(Users student){
+    //
+    //        student.setId(idCounter++);
+    //        userslist.add(student);
+    //        return "Successfully created";
+    //
+    //    }
+    public String createServices (Users user) {
+        Optional<Users> existingUser = userslist.stream()
+                .filter(u -> u.getEmail().equals(user.getEmail()))
+                .findFirst();
+
+        if (existingUser.isPresent()) {
+            return "Email already exists!";
+        }
+
+        user.setId(idCounter++);
+
+        userslist.add(user);
+        return "User successfully registered!";
+    }
+
+    // Authenticate user
+//    public Users login(String email, String password) {
+//        Users user = userslist.stream()
+//                .filter(u -> u.getEmail().equals(email))
+//                .findFirst()
+//                .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
+//
+//        if (user.getEmail().equals(email) && user.getPassword().equals(password)) {
+//                return user;
+//
+//        } else {
+//            throw new IllegalArgumentException("Invalid email or password");
+//        }
+//    }
 
 
      // create course
@@ -80,7 +116,6 @@ public class Services {
         }
         throw new IllegalArgumentException("Invalid username or password");
     }
-    
 
 
     //delete the student

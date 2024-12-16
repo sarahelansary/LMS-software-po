@@ -1,106 +1,109 @@
 package com.RestApiWithOutDb.RestApiWithOutDb.controller;
 
-
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Course;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Users;
 import com.RestApiWithOutDb.RestApiWithOutDb.service.Services;
 
-//@org.springframework.web.bind.annotation.RestController
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
 @RestController
 @RequestMapping("api")
 public class RestControllers {
+
+    private final Services services;
+    private final AuthenticationManager authenticationManager;
+
     @Autowired
-    private Services services;
+    public RestControllers(Services services, AuthenticationManager authenticationManager) {
+        this.services = services;
+        this.authenticationManager = authenticationManager;
+    }
 
+    // Test endpoint
+    @GetMapping("/hello")
+    public String hello() {
+        return "<h1>Success</h1>";
+    }
 
-
+    // User registration
     @PostMapping("/register")
-    public String createStudent(@RequestBody Users user){
-       String s =  services.createServices(user);
-        return s;
+    public String registerUser(@RequestBody Users user) {
+        return services.createServices(user);
     }
 
-@PostMapping("/login")
-public ResponseEntity<String> login(@RequestBody Map<String, String> credentials) {
-    try {
-        String username = credentials.get("username");
-        String password = credentials.get("password");
+    // User login
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody Users user) {
+        try {
+            UsernamePasswordAuthenticationToken token =
+                    new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
+            Authentication authentication = authenticationManager.authenticate(token);
 
-        if (username == null || password == null) {
-            return ResponseEntity.badRequest().body("Username and password are required.");
+            if (authentication.isAuthenticated()) {
+                return ResponseEntity.ok("Login successful!");
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+            }
+        } catch (AuthenticationException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }
-
-        Users user = services.login(username, password);
-        return ResponseEntity.ok("Welcome, " + user.getUsername());
-    } catch (IllegalArgumentException e) {
-        return ResponseEntity.status(401).body(e.getMessage());
     }
-}
 
-
-    @GetMapping("/getstudent")
-    public Users getStudent(@RequestParam int id){
+    // Get a single user by ID
+    @GetMapping("/getStudent")
+    public Users getStudent(@RequestParam int id) {
         return services.getUserById(id);
     }
 
-
+    // Delete a user
     @DeleteMapping("/delete")
-    public String deleteStudent(@RequestParam int id){
-            services.deleteServices(id);
-            return "delete Successfully";
+    public String deleteUser(@RequestParam int id) {
+        services.deleteServices(id);
+        return "Deleted successfully!";
     }
 
-
+    // Update user details
     @PostMapping("/update")
-    public Users update(@RequestBody Users user){
-
-        return services.updateServices( user.getId(), user );
-
+    public Users updateUser(@RequestBody Users user) {
+        return services.updateServices(user.getId(), user);
     }
 
+    // Add a new course
+    @PostMapping("/createCourse")
+    public String createCourse(@RequestBody Course course) {
+        return services.createCourse(course);
+    }
+
+    // Update course details
     @PostMapping("/updateCourse")
-    public Course updatec(@RequestBody Course course){
-
-        return services.updateCourses( course.getId(), course );
-
+    public Course updateCourse(@RequestBody Course course) {
+        return services.updateCourses(course.getId(), course);
     }
 
-
+    // Get all users
     @GetMapping("/getAll")
-    public List<Users> getAll(){
+    public List<Users> getAllUsers() {
         return services.getAllUsers();
     }
 
-//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-@PostMapping("/createCourse")
-public String createCourse(@RequestBody Course course) {
-    return services.createCourse(course);
-}
-
-@PostMapping("/addUserToCourse")
-public String addUserToCourse(@RequestParam Integer userId, @RequestParam Integer courseId) {
-    return services.addUserToCourse(userId, courseId);
-}
-
-@GetMapping("/getAllCourses")
-    public List<Course> getAllcCourses(){
+    // Get all courses
+    @GetMapping("/getAllCourses")
+    public List<Course> getAllCourses() {
         return services.getAllCourses();
     }
 
-
+    // Assign a user to a course
+    @PostMapping("/addUserToCourse")
+    public String addUserToCourse(@RequestParam Integer userId, @RequestParam Integer courseId) {
+        return services.addUserToCourse(userId, courseId);
+    }
 }
