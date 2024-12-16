@@ -3,6 +3,8 @@ package com.RestApiWithOutDb.RestApiWithOutDb.controller;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Course;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Lesson;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Users;
+import com.RestApiWithOutDb.RestApiWithOutDb.model.Notification;
+import com.RestApiWithOutDb.RestApiWithOutDb.service.NotificationService;
 import com.RestApiWithOutDb.RestApiWithOutDb.service.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,17 +19,20 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("api")
 public class RestControllers {
 
     private final Services services;
     private final AuthenticationManager authenticationManager;
+    private final NotificationService notificationService;
 
     @Autowired
-    public RestControllers(Services services, AuthenticationManager authenticationManager) {
+    public RestControllers(Services services,NotificationService notificationService, AuthenticationManager authenticationManager) {
         this.services = services;
         this.authenticationManager = authenticationManager;
+        this.notificationService = notificationService;
     }
 
     // Test endpoint
@@ -143,4 +148,28 @@ public class RestControllers {
         return "Lesson added Successfully";
     }
 
-}
+
+    
+    // Existing methods remain unchanged...
+
+    // Add Notification endpoint
+    @PostMapping("/notify")
+    public String sendNotification(@RequestParam String message, @RequestParam String recipientUsername) {
+        notificationService.addNotification(message, recipientUsername);
+        return "Notification sent successfully!";
+    }
+     // Get notifications for a user
+     @GetMapping("/notifications")
+     public List<Notification> getUserNotifications(@RequestParam String username, @RequestParam(required = false, defaultValue = "false") boolean unreadOnly) {
+         return notificationService.getNotificationsForUser(username, unreadOnly);
+     }
+ 
+     // Mark a notification as read
+     @PostMapping("/notifications/markRead")
+     public ResponseEntity<String> markNotificationAsRead(@RequestParam Integer id) {
+         notificationService.markNotificationAsRead(id);
+         return ResponseEntity.ok("Notification marked as read.");
+     }
+    }
+
+

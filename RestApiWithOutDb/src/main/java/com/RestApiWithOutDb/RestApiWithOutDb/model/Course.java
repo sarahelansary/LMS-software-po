@@ -42,6 +42,11 @@ public class Course {
     }
     
     
+    public Course(int i, String string, String string2, Object object) {
+        //TODO Auto-generated constructor stub
+    }
+
+
     public Integer getId() { return id; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
