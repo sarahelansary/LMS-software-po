@@ -58,15 +58,26 @@ public class SecurityConfig {
     }
 
     @Bean
+
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())  // Use lambda to disable CSRF
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers(new AntPathRequestMatcher("/api/register")).permitAll()  // Allow public access to /register
-                        .anyRequest().authenticated()  // Require authentication for other endpoints
+                        .requestMatchers("/api/register").permitAll()  // Allow public access to register endpoint
+
+                        .requestMatchers("/api/getAll").permitAll()// Allow public access to hello endpoint
+                        .requestMatchers("/api/createCourse").hasAnyRole("ADMIN", "INSTRUCTOR")
+                        .requestMatchers("/api/createCourse").hasAnyRole("ADMIN", "INSTRUCTOR")
+                        .requestMatchers("/api/getStudent").hasAnyRole("ADMIN", "INSTRUCTOR")
+                        .requestMatchers("/api/delete").hasAnyRole("ADMIN", "INSTRUCTOR")
+                        .requestMatchers("/api/getStudent").hasAnyRole("ADMIN", "INSTRUCTOR")
+                        .requestMatchers("/api/updateCourse").hasAnyRole("ADMIN", "INSTRUCTOR")
+                        .requestMatchers("/api/addUserToCourse").hasAnyRole("ADMIN", "INSTRUCTOR")
+                        .requestMatchers("/api/deleteCourse").hasAnyRole("ADMIN", "INSTRUCTOR")
+
+                        .anyRequest().authenticated()  // All other requests need to be authenticated
                 )
                 .httpBasic(withDefaults());  // Use HTTP Basic authentication
 
         return http.build();
-    }
-}
+    }}

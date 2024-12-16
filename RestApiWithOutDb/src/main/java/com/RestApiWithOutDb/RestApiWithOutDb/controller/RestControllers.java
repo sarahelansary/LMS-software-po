@@ -8,6 +8,7 @@ import com.RestApiWithOutDb.RestApiWithOutDb.service.Services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -42,6 +43,7 @@ public class RestControllers {
     }
 
     // User login
+    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUCTOR','STUDENT')")
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody Users user) {
         try {
@@ -60,12 +62,14 @@ public class RestControllers {
     }
 
     // Get a single user by ID
+    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUCTOR')")
     @GetMapping("/getStudent")
     public Users getStudent(@RequestParam int id) {
         return services.getUserById(id);
     }
 
     // Delete a user
+    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUCTOR')")
     @DeleteMapping("/delete")
     public String deleteUser(@RequestParam int id) {
         services.deleteServices(id);
@@ -73,6 +77,7 @@ public class RestControllers {
     }
 
     // Update user details
+    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUCTOR','STUDENT')")
     @PostMapping("/update")
     public Users updateUser(@RequestBody Users user) {
         return services.updateServices(user.getId(), user);
@@ -81,12 +86,14 @@ public class RestControllers {
     //======================================================
 
     // Add a new course
+    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUCTOR')")
     @PostMapping("/createCourse")
     public String createCourse(@RequestBody Course course) {
         return services.createCourse(course);
     }
 
     // Update course details
+    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUCTOR')")
     @PostMapping("/updateCourse")
     public Course updateCourse(@RequestBody Course course) {
         return services.updateCourses(course.getId(), course);
@@ -106,11 +113,12 @@ public class RestControllers {
 
 
     // Assign a user to a course
+    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUCTOR')")
     @PostMapping("/addUserToCourse")
     public String addUserToCourse(@RequestParam Integer userId, @RequestParam Integer courseId) {
         return services.addUserToCourse(userId, courseId);
     }
-
+    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUCTOR')")
     @DeleteMapping("/deleteCourse")
     public String deleteCourse(@RequestParam int id){
             services.deleteCourse(id);
