@@ -102,5 +102,11 @@ public String addUserToCourse(@RequestParam Integer userId, @RequestParam Intege
         return services.getAllCourses();
     }
 
+    @DeleteMapping("/deleteCourse")
+    public String deleteCourse(@RequestParam int id){
+            services.deleteCourse(id);
+            return "delete Successfully";
+    }
+
 
 }

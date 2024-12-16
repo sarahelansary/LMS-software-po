@@ -23,10 +23,10 @@ public class Services {
     }
 
     //register
-    public String createServices(Users student){
-        student.setId(idCounter++);
-        userslist.add(student);
-        return "Successfully created";
+    public String createServices(Users user){
+        user.setId(idCounter++);
+        userslist.add(user);
+        return "User successfully registered with ID: " + user.getId();
 
     }
 
@@ -96,6 +96,20 @@ public class Services {
 
 
     }
+
+    public String deleteCourse(int id)
+    {
+        for(Course s : courseslist){
+            if(s.getId()==id){
+                courseslist.remove(s);
+                return "Successfully deleted course";
+            }
+        }
+        throw new IllegalArgumentException("course not found");
+
+
+    }
+
 
     //update
 
