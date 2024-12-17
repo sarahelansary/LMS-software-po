@@ -169,4 +169,20 @@ public class Services {
         }
         return false;
     }
+
+    public boolean attendLesson(int userId, int courseId, int lessonId, String OTP) {
+        Users user = getUserById(userId);
+        Course course = getCourseById(courseId);
+        for(Lesson lesson : course.getLessons()){
+            if (lesson.getId() == lessonId) {
+                lesson.attendStudent(user);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public List<Lesson> getAllLessons (int courseId){
+        return getCourseById(courseId).getLessons();
+    }
 }

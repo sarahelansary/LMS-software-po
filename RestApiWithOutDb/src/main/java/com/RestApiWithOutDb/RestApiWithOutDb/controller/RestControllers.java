@@ -130,6 +130,8 @@ public class RestControllers {
             return "delete Successfully";
     }
 
+
+
     @PostMapping("/{courseId}/addMedia")
     public String addMediaFile(@PathVariable int courseId, @RequestParam String mediaFile) {
         boolean res = services.addMediaFile(courseId, mediaFile);
@@ -146,6 +148,21 @@ public class RestControllers {
             return "The course is not exist!";
         }
         return "Lesson added Successfully";
+    }
+
+    @PostMapping("/attendStudent")
+    public String attendStudent(@RequestParam int userId, @RequestParam int courseId,
+     @RequestParam int lessonId, @RequestParam String OTP) {
+        boolean res = services.attendLesson(userId, courseId, lessonId, OTP);
+        if (!res) {
+            return "The lesson is not exist!";
+        }
+        return "Student attended Successfully";
+    }
+
+    @GetMapping("/getAllLessons")
+    public List<Lesson> getAllLesson(@RequestParam int courseId) {
+        return services.getAllLessons(courseId);
     }
 
 
@@ -170,6 +187,7 @@ public class RestControllers {
          notificationService.markNotificationAsRead(id);
          return ResponseEntity.ok("Notification marked as read.");
      }
-    }
+
+}
 
 

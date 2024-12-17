@@ -1,9 +1,12 @@
 package com.RestApiWithOutDb.RestApiWithOutDb.model;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +20,19 @@ public class Lesson {
     private int id;
     private String title;
     private String content;
+    private String OTP;
+
+    private Set<Users> students;
+
+    
+
+    public Lesson(int id, String title, String content, String oTP) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        OTP = oTP;
+        students = new HashSet<>();
+    }
 
     public int getId() {
         return id;
@@ -41,4 +57,15 @@ public class Lesson {
     public void setContent(String content) {
         this.content = content;
     }
+
+    public String getOTP() {
+        return OTP;
+    }
+
+    public void setOTP(String OTP) {
+        this.OTP = OTP;
+    }
+
+    public Set<Users> getStudents() { return students; }
+    public void attendStudent(Users student) { this.students.add(student); }
 }
