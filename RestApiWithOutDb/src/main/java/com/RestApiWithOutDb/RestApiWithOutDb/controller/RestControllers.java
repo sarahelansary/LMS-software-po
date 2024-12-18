@@ -123,6 +123,8 @@ public class RestControllers {
     public String addUserToCourse(@RequestParam Integer userId, @RequestParam Integer courseId) {
         return services.addUserToCourse(userId, courseId);
     }
+
+
     @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUCTOR')")
     @DeleteMapping("/deleteCourse")
     public String deleteCourse(@RequestParam int id){
@@ -160,7 +162,7 @@ public class RestControllers {
      @RequestParam int lessonId, @RequestParam String OTP) {
         boolean res = services.attendLesson(userId, courseId, lessonId, OTP);
         if (!res) {
-            return "The lesson is not exist!";
+            return "The lesson is not exist or wrong Password!";
         }
         return "Student attended Successfully";
     }
