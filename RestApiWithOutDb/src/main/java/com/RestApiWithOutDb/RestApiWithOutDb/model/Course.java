@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.print.attribute.standard.Media;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
@@ -29,13 +31,19 @@ public class Course {
     private List<Lesson> lessons;
    
     private Set<Users> students;
+    private Users instructor;
 
-    public Course(Integer id, String name, String description, String duration, Set<Users> students) {
+    public Course() {
+    }
+
+
+    public Course(Integer id, String name, String description, String duration, Set<Users> students, Users instructor) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.duration = duration;
         this.students = students;
+        this.instructor = instructor;
 
         this.mediaFiles = new ArrayList<>();
         this.lessons = new ArrayList<>();
@@ -45,7 +53,19 @@ public class Course {
     public Course(int i, String string, String string2, Object object) {
         //TODO Auto-generated constructor stub
     }
-
+ 
+    public Course(int id, String name, String description, String duration, Set<Users> students) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.duration = duration;
+        this.students = new HashSet<>();
+        this.lessons = new ArrayList<>();
+        this.mediaFiles = new ArrayList<>();
+    
+     
+        
+    }
 
     public Integer getId() { return id; }
     public String getName() { return name; }
@@ -56,8 +76,13 @@ public class Course {
     public void setStudents(Set<Users> students) { this.students = students; }
 
     public List<String> getMediaFiles() { return mediaFiles; }
-    public void addMediaFile(String mediaFile) { this.mediaFiles.add(mediaFile); }
+    public void addMediaFile(String media) { this.mediaFiles.add(media); }
     public List<Lesson> getLessons() { return lessons; }
     public void addLesson(Lesson lesson) { this.lessons.add(lesson); }
+    
+    public Users getInstructor() { return instructor; }
+    public void setInstructor(Users instructor) { this.instructor = instructor; }
+
+
     
 }
