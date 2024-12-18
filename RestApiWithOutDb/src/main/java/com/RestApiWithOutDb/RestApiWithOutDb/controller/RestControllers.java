@@ -131,7 +131,8 @@ public class RestControllers {
     }
 
 
-
+    // Add media file to a course
+    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUCTOR')")
     @PostMapping("/{courseId}/addMedia")
     public String addMediaFile(@PathVariable int courseId, @RequestParam String mediaFile) {
         boolean res = services.addMediaFile(courseId, mediaFile);
@@ -141,6 +142,8 @@ public class RestControllers {
         return "Media added Successfully";
     }
 
+    // Add lesson to a course
+    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUCTOR')")
     @PostMapping("/{courseId}/addLesson")
     public String addLesson(@PathVariable int courseId, @RequestBody Lesson lesson) {
         boolean res = services.addLesson(courseId, lesson);
@@ -150,6 +153,8 @@ public class RestControllers {
         return "Lesson added Successfully";
     }
 
+    // Attend student to a lesson
+    @PreAuthorize("hasAnyRole('STUDENT')")
     @PostMapping("/attendStudent")
     public String attendStudent(@RequestParam int userId, @RequestParam int courseId,
      @RequestParam int lessonId, @RequestParam String OTP) {
@@ -160,6 +165,8 @@ public class RestControllers {
         return "Student attended Successfully";
     }
 
+    // Get all lessons from a course
+    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUCTOR','STUDENT')")
     @GetMapping("/getAllLessons")
     public List<Lesson> getAllLesson(@RequestParam int courseId) {
         return services.getAllLessons(courseId);
