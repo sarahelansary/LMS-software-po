@@ -1,13 +1,12 @@
 package com.RestApiWithOutDb.RestApiWithOutDb.model;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.print.attribute.standard.Media;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 //import lombok.AllArgsConstructor;
@@ -29,24 +28,34 @@ public class Course {
 
     private List<String> mediaFiles;
     private List<Lesson> lessons;
-   
+
     private Set<Users> students;
+
     private Users instructor;
 
-    public Course() {
-    }
 
+@Override
+public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Course course = (Course) o;
+    return Objects.equals(id, course.id);
+}
 
-    public Course(Integer id, String name, String description, String duration, Set<Users> students, Users instructor) {
+@Override
+public int hashCode() {
+    return Objects.hash(id);
+}
+
+    public Course(Integer id, String name, String description, String duration, List<String> mediaFiles, List<Lesson> lessons, Set<Users> students, Users instructor) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.duration = duration;
         this.students = students;
-        this.instructor = instructor;
-
-        this.mediaFiles = new ArrayList<>();
-        this.lessons = new ArrayList<>();
+        this.mediaFiles = mediaFiles;
+        this.lessons = lessons;
+        this.instructor = instructor; // Ensure instructor is set properly
     }
 
     public Course() {
@@ -54,22 +63,7 @@ public class Course {
         this.lessons = new ArrayList<>();
         this.students = new HashSet<>();
     }
-    public Course(int i, String string, String string2, Object object) {
-        //TODO Auto-generated constructor stub
-    }
- 
-    public Course(int id, String name, String description, String duration, Set<Users> students) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.duration = duration;
-        this.students = new HashSet<>();
-        this.lessons = new ArrayList<>();
-        this.mediaFiles = new ArrayList<>();
-    
-     
-        
-    }
+
 
     public Integer getId() { return id; }
     public String getName() { return name; }

@@ -30,7 +30,7 @@ class RestApiWithOutDbApplicationTests {
 
 	private RestControllers restControllers = new RestControllers(services, notificationService, authenticationManager);
 
-	private Course course = new Course(
+	private Course course = =new Course(
 		0,
 		"testCourse", 
 		"testDescription", 

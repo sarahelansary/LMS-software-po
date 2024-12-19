@@ -28,9 +28,12 @@ public class Services {
     public Services(NotificationService notificationService) {
         this.notificationService = notificationService;
 
-        // Adding default courses
-        courseslist.add(new Course(idCounter++, "Mathematics", "A math course", "36 hours", new HashSet<>(), null));
-        // Adding default users
+        Users emily = new Users(idCounter++, "emily", "password123", "instructor", "emily@example.com", new HashSet<>());
+        userslist.add(emily);
+
+        Course mathCourse = new Course(idCounter++, "Mathematics", "A math course", "36 hours", new ArrayList<>(), new ArrayList<>(), new HashSet<>(), emily);
+        courseslist.add(mathCourse);
+
         userslist.add(new Users(idCounter++, "john_doe", "password123", "student", "john@example.com", new HashSet<>()));
     }
 
@@ -54,35 +57,43 @@ public class Services {
         return "Course successfully created";
     }
 
-    public String addUserToCourse(Integer userId, Integer courseId) {
-        Users user = getUserById(userId);
+    public String addUserToCourse( Integer userId,Integer courseId) {
         Course course = getCourseById(courseId);
-    
-        if (user != null && course != null) {
-            course.getStudents().add(user);
-            user.getCourses().add(course);
-    
-            // Add a notification
-            notificationService.addNotification(
-                    "You have been added to the course: " + course.getName(),
-                    user.getUsername());
-            notificationService.addNotification(
-                    "A new student has enrolled in your course: " + course.getName() +
-                    ". Student details: Username - " + user.getUsername() + ", Email - " + user.getEmail(),
-                    course.getInstructor().getUsername());
-            return "User successfully added to course";
-        } else {
-            return "User or course not found";
-        }
-    }
-    public Course getCourseById(Integer courseId) {
-        for (Course course : courseslist) {
-            if (course.getId().equals(courseId)) {
-                return course;
+        Users user = getUserById(userId);
+
+        if (course != null && user != null) {
+            if (user.getRole().equals("instructor")) {
+                // Assign the user as the instructor of the course
+                course.setInstructor(user);
+
+                // Notify the instructor
+                notificationService.addNotification(
+                        "You have been assigned as the instructor for the course: " + course.getName(),
+                        user.getUsername());
+            } else if (user.getRole().equals("student")) {
+                // Add the user as a student to the course
+                course.getStudents().add(user);
+
+                // Notify the student
+                notificationService.addNotification(
+                        "You have been added to the course: " + course.getName(),
+                        user.getUsername());
+            } else {
+                return "Invalid user role.";
             }
+            return "User successfully added to course.";
+        } else {
+            return "User or course not found.";
         }
-        throw new IllegalArgumentException("Course not found");
     }
+
+    public Course getCourseById(Integer courseId) {
+        return courseslist.stream()
+                .filter(course -> course.getId().equals(courseId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Course not found"));
+    }
+
 
     public Users getUserById(int id) {
         for (Users user : userslist) {
