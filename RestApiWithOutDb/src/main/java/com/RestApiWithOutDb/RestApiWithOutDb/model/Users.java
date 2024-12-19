@@ -1,9 +1,7 @@
 package com.RestApiWithOutDb.RestApiWithOutDb.model;
 
-import java.util.Objects;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
@@ -24,8 +22,7 @@ public class Users {
     private String role;
     private String email;
 
-
-    private Set<Course> courses ;
+    private Set<Integer> courses ;
 
      public Integer getId() { return id; }
     public String getUsername() { return username; }
@@ -34,27 +31,13 @@ public class Users {
     public void setPassword(String password) { this.password = password; }
     public String getRole() { return role; }
     public void setRole(String role) {
-
             this.role = role;
-
-    }
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Users users = (Users) o;
-        return Objects.equals(id, users.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
-    public Set<Course> getCourses() { return courses; }
-    public void setCourses(Set<Course> courses) { this.courses = courses; }
+    public Set<Integer> getCourses() { return courses; }
+    public void setCourses(Set<Integer> courses) { this.courses = courses; }
 
 
 

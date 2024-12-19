@@ -1,4 +1,4 @@
-package com.RestApiWithOutDb.RestApiWithOutDb;
+package com.RestApiWithOutDb.RestApiWithOutDb.model;
 
 
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Course;
@@ -12,6 +12,7 @@ import java.util.Date;
 @Data
 @Getter
 @Setter
+@AllArgsConstructor
 public class Assignment {
     private Integer id;
     private String title;

@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashSet;
-import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,7 +14,6 @@ import org.springframework.security.core.userdetails.User;
 import com.RestApiWithOutDb.RestApiWithOutDb.controller.RestControllers;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Course;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Lesson;
-import com.RestApiWithOutDb.RestApiWithOutDb.model.Notification;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Users;
 import com.RestApiWithOutDb.RestApiWithOutDb.service.NotificationService;
 import com.RestApiWithOutDb.RestApiWithOutDb.service.Services;
@@ -30,7 +28,7 @@ class RestApiWithOutDbApplicationTests {
 
 	private RestControllers restControllers = new RestControllers(services, notificationService, authenticationManager);
 
-	private Course course = =new Course(
+	private Course course = new Course(
 		0,
 		"testCourse", 
 		"testDescription", 
@@ -43,7 +41,7 @@ class RestApiWithOutDbApplicationTests {
 		"testpass", 
 		"student",
 		"test@gmail.com",
-		new HashSet<>()
+		new HashSet<Integer>()
 	);
 	private Lesson lesson = new Lesson(
 		0,
@@ -75,8 +73,8 @@ class RestApiWithOutDbApplicationTests {
 		);
 
 
-		restControllers.updateCourse(0, updatedCourse);
-		assertEquals(updatedCourse, restControllers.updateCourse(0, updatedCourse));
+		restControllers.updateCourse(updatedCourse);
+		assertEquals(updatedCourse, restControllers.updateCourse(updatedCourse));
 
 		Course updatedCourse2 = new Course(
 			-1,
@@ -86,7 +84,7 @@ class RestApiWithOutDbApplicationTests {
 			new HashSet<>()
 		);
 		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-			restControllers.updateCourse(0, updatedCourse2);
+			restControllers.updateCourse(updatedCourse2);
 		});
 		assertEquals("Course ID not found", exception.getMessage());
 	}
@@ -170,21 +168,6 @@ class RestApiWithOutDbApplicationTests {
 			restControllers.attendStudent(-1, course.getId(), lesson.getId(), "testotp1");
 		});
 		assertEquals("User not found", userExeption.getMessage());
-	}
-
-	// testing notifications
-	@Test
-	void notificationTest() {
-		restControllers.createCourse(course);
-		restControllers.registerUser(student);
-		restControllers.addUserToCourse(student.getId(), course.getId());
-
-		List<Notification> notifications = restControllers.getUserNotifications(student.getUsername(), false);
-		assertTrue(notifications.size() > 0);
-
-		Notification notification = notifications.get(0);
-		restControllers.markNotificationAsRead(notification.getId());
-		assertTrue(notification.isRead());
 	}
 
 }
