@@ -68,4 +68,14 @@ public class Lesson {
 
     public Set<Users> getStudents() { return students; }
     public void attendStudent(Users student) { this.students.add(student); }
+
+    public Course getCourse() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getCourse'");
+    }
+
+    public String getUsername() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getUsername'");
+    }
 }

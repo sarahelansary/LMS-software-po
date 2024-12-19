@@ -23,11 +23,11 @@ import java.util.List;
 @RestController
 @RequestMapping("api")
 public class RestControllers {
-
+    
     private final Services services;
     private final AuthenticationManager authenticationManager;
     private final NotificationService notificationService;
-
+    
     @Autowired
     public RestControllers(Services services,NotificationService notificationService, AuthenticationManager authenticationManager) {
         this.services = services;
@@ -35,11 +35,18 @@ public class RestControllers {
         this.notificationService = notificationService;
     }
 
-    // Test endpoint
-    @GetMapping("/hello")
-    public String hello() {
-        return "<h1>Success</h1>";
-    }
+    
+ 
+// Test endpoint
+@GetMapping("/hello")
+public String hello() {
+    return "<h1>Success</h1>";
+}
+
+
+
+
+
 
     // User registration
     @PostMapping("/register")
@@ -99,9 +106,15 @@ public class RestControllers {
 
     // Update course details
     @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUCTOR')")
-    @PostMapping("/updateCourse")
-    public Course updateCourse(@RequestBody Course course) {
-        return services.updateCourses(course.getId(), course);
+    @PostMapping("/{courseId}/updateCourse")
+    public String updateCourse(@PathVariable int courseId, @RequestBody Course course) {
+        boolean res = services.updateCourse(courseId, course);
+        if (!res) {
+            return "The course does not exist!";
+        }
+        // Notify students about course update
+        services.notifyStudentsCourseUpdated(courseId);
+        return "Course updated Successfully";
     }
 
     // Get all users
@@ -123,45 +136,64 @@ public class RestControllers {
     public String addUserToCourse(@RequestParam Integer userId, @RequestParam Integer courseId) {
         return services.addUserToCourse(userId, courseId);
     }
+
+
     @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUCTOR')")
-    @DeleteMapping("/deleteCourse")
-    public String deleteCourse(@RequestParam int id){
-            services.deleteCourse(id);
-            return "delete Successfully";
+    @DeleteMapping("/{courseId}/deleteCourse")
+    public String deleteCourse(@PathVariable int courseId) {
+        String res = services.deleteCourse(courseId);
+        if (res == null || res.isEmpty()) {
+            return "The course does not exist!";
+        }
+        // Notify students about course deletion
+        services.notifyStudentsCourseDeleted(courseId);
+        return "Course deleted Successfully";
     }
 
-
-
+    // Add media file to a course
+    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUCTOR')")
     @PostMapping("/{courseId}/addMedia")
     public String addMediaFile(@PathVariable int courseId, @RequestParam String mediaFile) {
         boolean res = services.addMediaFile(courseId, mediaFile);
         if (!res) {
             return "The course is not exist!";
         }
+        // Notify students about new media
+        services.notifyStudentsNewMedia(courseId, mediaFile);
         return "Media added Successfully";
     }
 
+    // Add lesson to a course
+    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUCTOR')")
     @PostMapping("/{courseId}/addLesson")
     public String addLesson(@PathVariable int courseId, @RequestBody Lesson lesson) {
         boolean res = services.addLesson(courseId, lesson);
         if (!res) {
-            return "The course is not exist!";
+            return "The course does not exist!";
         }
+        // Notify students about new lesson
+        services.notifyStudentsNewLesson(courseId, lesson.getUsername());
         return "Lesson added Successfully";
     }
 
+    // Attend student to a lesson
+    @PreAuthorize("hasAnyRole('STUDENT')")
     @PostMapping("/attendStudent")
     public String attendStudent(@RequestParam int userId, @RequestParam int courseId,
-     @RequestParam int lessonId, @RequestParam String OTP) {
+                                @RequestParam int lessonId, @RequestParam String OTP) {
         boolean res = services.attendLesson(userId, courseId, lessonId, OTP);
         if (!res) {
-            return "The lesson is not exist!";
+            return "Attendance failed!";
         }
-        return "Student attended Successfully";
+        // Notify instructor about student attendance
+        services.notifyInstructorStudentAttendedLesson(userId, lessonId);
+        return "Student attended the lesson successfully";
     }
 
+    // Get all lessons from a course
+    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUCTOR','STUDENT')")
     @GetMapping("/getAllLessons")
-    public List<Lesson> getAllLesson(@RequestParam int courseId) {
+    public List<Lesson> getAllLessons(@RequestParam int courseId) {
         return services.getAllLessons(courseId);
     }
 
@@ -171,16 +203,18 @@ public class RestControllers {
     // Add Notification endpoint
     @PostMapping("/notify")
     public String sendNotification(@RequestParam String message, @RequestParam String recipientUsername) {
-        notificationService.addNotification(message, recipientUsername);
-        return "Notification sent successfully!";
+        int messageId = notificationService.addNotification(message, recipientUsername);
+        return "Notification sent successfully! Message ID: " + messageId;
     }
      // Get notifications for a user
+     @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUCTOR', 'STUDENT')")
      @GetMapping("/notifications")
      public List<Notification> getUserNotifications(@RequestParam String username, @RequestParam(required = false, defaultValue = "false") boolean unreadOnly) {
          return notificationService.getNotificationsForUser(username, unreadOnly);
      }
  
      // Mark a notification as read
+     @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUCTOR', 'STUDENT')")
      @PostMapping("/notifications/markRead")
      public ResponseEntity<String> markNotificationAsRead(@RequestParam Integer id) {
          notificationService.markNotificationAsRead(id);
@@ -188,5 +222,3 @@ public class RestControllers {
      }
 
 }
-
-
