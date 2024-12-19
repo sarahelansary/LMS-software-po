@@ -130,8 +130,18 @@ public class RestControllers {
     @DeleteMapping("/deleteCourse")
     public String deleteCourse(@RequestParam int id) {
         services.deleteCourse(id);
+        // Notify students about the course deletion
+        List<Users> students = services.getAllUsers();
+        for (Users student : students) {
+            if (student.getRole().contains("STUDENT")) {
+                notificationService.addNotification("Course " + id + " has been deleted", student.getUsername());
+            }
+            notificationService.addNotification("Course " + id + " has been deleted", student.getUsername());
+
+        }
         return "delete Successfully";
     }
+    
 
     // Add media file to a course
     @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUCTOR')")
@@ -140,6 +150,14 @@ public class RestControllers {
         boolean res = services.addMediaFile(courseId, mediaFile);
         if (!res) {
             return "The course is not exist!";
+        }
+        // Notify students about the new media
+        List<Users> students = services.getAllUsers();
+        for (Users student : students) {
+            if (student.getRole().contains("STUDENT")) {
+                notificationService.addNotification("New media file added to course " + courseId, student.getUsername());
+            }
+             notificationService.addNotification("New media file added to course " + courseId, student.getUsername());
         }
         return "Media added Successfully";
     }
@@ -152,6 +170,14 @@ public class RestControllers {
         if (!res) {
             return "The course is not exist!";
         }
+         // Notify students about the new lesson
+         List<Users> students = services.getAllUsers();
+         for (Users student : students) {
+             if (student.getRole().contains("STUDENT")) {
+                 notificationService.addNotification("New lesson added to course " + courseId, student.getUsername());
+             }
+              notificationService.addNotification("New lesson added to course " + courseId, student.getUsername());
+         }
         return "Lesson added Successfully";
     }
 
@@ -163,6 +189,15 @@ public class RestControllers {
         boolean res = services.attendLesson(userId, courseId, lessonId, OTP);
         if (!res) {
             return "The lesson is not exist or wrong Password!";
+        }
+        // Notify instructor about the student's attendance
+        List<Users> instructors = services.getAllUsers();
+        for (Users instructor : instructors) {
+            if (instructor.getRole().contains("INSTRUCTOR")) {
+            notificationService.addNotification("Student with ID " + userId + " attended lesson " + lessonId + " in course " + courseId, instructor.getUsername());
+            }
+            notificationService.addNotification("Student with ID " + userId + " attended lesson " + lessonId + " in course " + courseId, instructor.getUsername());
+
         }
         return "Student attended Successfully";
     }
@@ -180,7 +215,8 @@ public class RestControllers {
     @PostMapping("/notify")
     public String sendNotification(@RequestParam String message, @RequestParam String recipientUsername) {
         notificationService.addNotification(message, recipientUsername);
-        return "Notification sent successfully!";
+        int messageId = notificationService.addNotification(message, recipientUsername);
+        return "Notification sent successfully! Message ID: " + messageId;
     }
 
     // Get notifications for a user
