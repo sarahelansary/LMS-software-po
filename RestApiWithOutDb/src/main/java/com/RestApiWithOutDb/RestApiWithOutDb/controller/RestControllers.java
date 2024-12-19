@@ -5,6 +5,9 @@ import com.RestApiWithOutDb.RestApiWithOutDb.model.Lesson;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Users;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Notification;
 import com.RestApiWithOutDb.RestApiWithOutDb.service.NotificationService;
+import com.RestApiWithOutDb.RestApiWithOutDb.model.Question;
+import com.RestApiWithOutDb.RestApiWithOutDb.model.Quiz;
+import com.RestApiWithOutDb.RestApiWithOutDb.model.Assignment;
 import com.RestApiWithOutDb.RestApiWithOutDb.service.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -220,5 +223,42 @@ public String hello() {
          notificationService.markNotificationAsRead(id);
          return ResponseEntity.ok("Notification marked as read.");
      }
+
+    // Create a new quiz
+    @PostMapping("/createQuiz")
+    public String createQuiz(@RequestBody Quiz quiz) {
+        return services.createQuiz(quiz);
+    }
+
+    // Add question to a quiz
+    @PostMapping("/addQuestionToQuiz")
+    public String addQuestionToQuiz(@RequestParam Integer quizId, @RequestBody Question question) {
+        return services.addQuestionToQuiz(quizId, question);
+    }
+
+    // Submit assignment
+    @PostMapping("/submitAssignment")
+    public String submitAssignment(@RequestParam Integer studentId, @RequestParam Integer courseId, @RequestParam String fileUrl) {
+        return services.submitAssignment(studentId, courseId, fileUrl);
+    }
+
+    // Grade assignment
+    @PostMapping("/gradeAssignment")
+    public String gradeAssignment(@RequestParam Integer assignmentId, @RequestParam Integer grade, @RequestParam String feedback) {
+        return services.gradeAssignment(assignmentId, grade, feedback);
+    }
+
+    // Get all quizzes
+    @GetMapping("/getAllQuizzes")
+    public List<Quiz> getAllQuizzes() {
+        return services.getAllQuizzes();
+    }
+
+    // Get all assignments
+   // @GetMapping("/getAllAssignments")
+    //public List<Assignment> getAllAssignments() {
+      //  return services.getAllAssignments();
+    //}
+
 
 }
