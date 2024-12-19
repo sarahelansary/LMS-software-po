@@ -40,8 +40,12 @@ public class Course {
         this.mediaFiles = new ArrayList<>();
         this.lessons = new ArrayList<>();
     }
-    
-    
+
+    public Course() {
+        this.mediaFiles = new ArrayList<>();
+        this.lessons = new ArrayList<>();
+        this.students = new HashSet<>();
+    }
     public Course(int i, String string, String string2, Object object) {
         //TODO Auto-generated constructor stub
     }
