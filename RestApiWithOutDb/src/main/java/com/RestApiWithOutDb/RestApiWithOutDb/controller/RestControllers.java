@@ -127,7 +127,7 @@ public class RestControllers {
     }
 
     // Assign a user to a course
-    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUCTOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUCTOR', 'STUDENT')")
     @PostMapping("/addUserToCourse")
     public String addUserToCourse(@RequestParam Integer userId, @RequestParam Integer courseId) {
         return services.addUserToCourse(userId, courseId);

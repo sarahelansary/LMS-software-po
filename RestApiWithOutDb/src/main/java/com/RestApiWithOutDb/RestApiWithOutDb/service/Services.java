@@ -33,7 +33,7 @@ public class Services {
 
     public Services(NotificationService notificationService, EmailService emailservice) {
         this.notificationService = notificationService;
-this.emailService=emailservice;
+        this.emailService = emailservice;
         // Adding default courses
         courseslist.add(new Course(idCounter++, "Mathematics", "A math course", "36 hours", new HashSet<>()));
 
@@ -70,7 +70,7 @@ this.emailService=emailservice;
         Users user = getUserById(userId);
         Course course = getCourseById(courseId);
 
-        if (user != null && course != null) {
+        if (user != null && course != null && "student".equalsIgnoreCase(user.getRole())) {
             course.getStudents().add(user.getId());
             user.getCourses().add(course.getId());
 
@@ -83,7 +83,6 @@ this.emailService=emailservice;
         } else {
             return "User or course not found";
         }
-
 
     }
 
@@ -202,7 +201,6 @@ this.emailService=emailservice;
         return getCourseById(courseId).getLessons();
     }
 
-
     // Create quiz
     public String createQuiz(Quiz quiz) {
         quiz.setId(idCounter++);
@@ -237,9 +235,11 @@ this.emailService=emailservice;
 
         if (student != null && course != null) {
             // Create a new Assignment using the constructor you defined
-            Assignment assignment = new Assignment(idCounter++, "Assignment Title", course, student, fileUrl, "", 0, null);
+            Assignment assignment = new Assignment(idCounter++, "Assignment Title", course, student, fileUrl, "", 0,
+                    null);
             assignmentList.add(assignment); // Add the assignment to the list
-            emailService.sendEmail(student.getEmail(), "assignment", "You submiited your assignment for course: ."+courseId);
+            emailService.sendEmail(student.getEmail(), "assignment",
+                    "You submiited your assignment for course: ." + courseId);
 
             return "Assignment submitted successfully";
         }
