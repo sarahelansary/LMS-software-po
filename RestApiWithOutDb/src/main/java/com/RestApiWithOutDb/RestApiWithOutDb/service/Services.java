@@ -29,10 +29,11 @@ public class Services {
     private List<Assignment> assignmentList = new ArrayList<>();
 
     private NotificationService notificationService;
+    private EmailService emailService;
 
-    public Services(NotificationService notificationService) {
+    public Services(NotificationService notificationService, EmailService emailservice) {
         this.notificationService = notificationService;
-
+this.emailService=emailservice;
         // Adding default courses
         courseslist.add(new Course(idCounter++, "Mathematics", "A math course", "36 hours", new HashSet<>()));
 
@@ -77,10 +78,13 @@ public class Services {
             notificationService.addNotification(
                     "You have been added to the course: " + course.getName(),
                     user.getUsername());
+            emailService.sendEmail(user.getEmail(), "Course Enrollment", "You have been enrolled in the course.");
             return "User successfully added to course";
         } else {
             return "User or course not found";
         }
+
+
     }
 
     public Course getCourseById(Integer courseId) {
@@ -235,6 +239,8 @@ public class Services {
             // Create a new Assignment using the constructor you defined
             Assignment assignment = new Assignment(idCounter++, "Assignment Title", course, student, fileUrl, "", 0, null);
             assignmentList.add(assignment); // Add the assignment to the list
+            emailService.sendEmail(student.getEmail(), "assignment", "You submiited your assignment for course: ."+courseId);
+
             return "Assignment submitted successfully";
         }
         return "Student or Course not found";

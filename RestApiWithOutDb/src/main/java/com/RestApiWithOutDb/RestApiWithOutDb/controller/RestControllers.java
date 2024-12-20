@@ -4,6 +4,7 @@ import com.RestApiWithOutDb.RestApiWithOutDb.model.Course;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Lesson;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Users;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Notification;
+import com.RestApiWithOutDb.RestApiWithOutDb.service.EmailService;
 import com.RestApiWithOutDb.RestApiWithOutDb.service.NotificationService;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Question;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Quiz;
@@ -30,13 +31,19 @@ public class RestControllers {
     private final AuthenticationManager authenticationManager;
     private final NotificationService notificationService;
 
+    private  final EmailService emailService;
+
+
     @Autowired
+
     public RestControllers(Services services, NotificationService notificationService,
-            AuthenticationManager authenticationManager) {
+                           AuthenticationManager authenticationManager, EmailService emailService) {
         this.services = services;
         this.authenticationManager = authenticationManager;
         this.notificationService = notificationService;
+        this.emailService = emailService; // Fix typo here
     }
+
 
     // Test endpoint
     @GetMapping("/hello")
@@ -135,9 +142,10 @@ public class RestControllers {
         for (Users student : students) {
             if (student.getRole().contains("STUDENT")) {
                 notificationService.addNotification("Course " + id + " has been deleted", student.getUsername());
+                emailService.sendEmail(student.getEmail(), "Course deletion", "Course " + id + " has been deleted");
             }
             notificationService.addNotification("Course " + id + " has been deleted", student.getUsername());
-
+            emailService.sendEmail(student.getEmail(), "Course deletion", "Course " + id + " has been deleted");
         }
         return "delete Successfully";
     }
@@ -154,10 +162,14 @@ public class RestControllers {
         // Notify students about the new media
         List<Users> students = services.getAllUsers();
         for (Users student : students) {
-            if (student.getRole().contains("STUDENT")) {
+            if (student.getRole().contains("STUDENT")||student.getRole().contains("student")) {
                 notificationService.addNotification("New media file added to course " + courseId, student.getUsername());
+                emailService.sendEmail(student.getEmail(), "media added", "New media file added to course " + courseId);
+
             }
              notificationService.addNotification("New media file added to course " + courseId, student.getUsername());
+
+
         }
         return "Media added Successfully";
     }
@@ -173,16 +185,18 @@ public class RestControllers {
          // Notify students about the new lesson
          List<Users> students = services.getAllUsers();
          for (Users student : students) {
-             if (student.getRole().contains("STUDENT")) {
+             if (student.getRole().contains("student")||student.getRole().contains("STUDENT")) {
                  notificationService.addNotification("New lesson added to course " + courseId, student.getUsername());
+                 emailService.sendEmail(student.getEmail(), "new lesson added", "New lesson added to course " + courseId);
              }
               notificationService.addNotification("New lesson added to course " + courseId, student.getUsername());
+
          }
         return "Lesson added Successfully";
     }
 
     // Attend student to a lesson
-    @PreAuthorize("hasAnyRole('STUDENT')")
+    @PreAuthorize("hasRole('STUDENT')")
     @PostMapping("/attendStudent")
     public String attendStudent(@RequestParam int userId, @RequestParam int courseId,
             @RequestParam int lessonId, @RequestParam String OTP) {
@@ -193,12 +207,15 @@ public class RestControllers {
         // Notify instructor about the student's attendance
         List<Users> instructors = services.getAllUsers();
         for (Users instructor : instructors) {
-            if (instructor.getRole().contains("INSTRUCTOR")) {
-            notificationService.addNotification("Student with ID " + userId + " attended lesson " + lessonId + " in course " + courseId, instructor.getUsername());
+            if (instructor.getRole().contains("INSTRUCTOR") || instructor.getRole().contains("instructor")) {
+                notificationService.addNotification("Student with ID " + userId + " attended lesson " + lessonId + " in course " + courseId, instructor.getUsername());
+                emailService.sendEmail(instructor.getEmail(),
+                        "new student attended",
+                        "Student with ID " + userId + " attended lesson " + lessonId + " in course ");
             }
             notificationService.addNotification("Student with ID " + userId + " attended lesson " + lessonId + " in course " + courseId, instructor.getUsername());
-
         }
+
         return "Student attended Successfully";
     }
 
@@ -215,6 +232,7 @@ public class RestControllers {
     @PostMapping("/notify")
     public String sendNotification(@RequestParam String message, @RequestParam String recipientUsername) {
         notificationService.addNotification(message, recipientUsername);
+
         int messageId = notificationService.addNotification(message, recipientUsername);
         return "Notification sent successfully! Message ID: " + messageId;
     }
