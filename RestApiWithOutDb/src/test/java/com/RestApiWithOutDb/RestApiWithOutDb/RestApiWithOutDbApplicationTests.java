@@ -2,53 +2,72 @@ package com.RestApiWithOutDb.RestApiWithOutDb;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashSet;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.userdetails.User;
+
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import com.RestApiWithOutDb.RestApiWithOutDb.controller.RestControllers;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Course;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Lesson;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Users;
+import com.RestApiWithOutDb.RestApiWithOutDb.service.EmailService;
 import com.RestApiWithOutDb.RestApiWithOutDb.service.NotificationService;
 import com.RestApiWithOutDb.RestApiWithOutDb.service.Services;
 
+import java.util.Properties;
 
 @SpringBootTest
 class RestApiWithOutDbApplicationTests {
 
-   private AuthenticationManager authenticationManager;
-   private NotificationService notificationService = new NotificationService();
-	private Services services = new Services(notificationService, null);
+	private AuthenticationManager authenticationManager;
 
-	private RestControllers restControllers = new RestControllers(services, notificationService, authenticationManager, null);
+	private JavaMailSenderImpl createMailSender() {
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost("smtp.gmail.com");
+        mailSender.setPort(587);
+        mailSender.setUsername("sarahibrahim.255200@gmail.com");
+        mailSender.setPassword("cguh dmtt cdll xfwz");
+
+        Properties props = mailSender.getJavaMailProperties();
+        props.put("mail.transport.protocol", "smtp");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.debug", "true");
+
+        return mailSender;
+    }
+
+
+	private EmailService emailService = new EmailService(createMailSender());
+	private NotificationService notificationService = new NotificationService();
+	private Services services = new Services(notificationService, emailService);
+
+	private RestControllers restControllers = new RestControllers(services, notificationService, authenticationManager,
+			emailService);
 
 	private Course course = new Course(
-		0,
-		"testCourse",
-		"testDescription",
-		"0 hours",
-		new HashSet<>()
-	);
+			0,
+			"testCourse",
+			"testDescription",
+			"0 hours",
+			new HashSet<>());
 	private Users student = new Users(
-		0,
-		"testUser",
-		"testpass",
-		"student",
-		"test@gmail.com",
-		new HashSet<Integer>()
-	);
+			0,
+			"testUser",
+			"testpass",
+			"student",
+			"test@gmail.com",
+			new HashSet<Integer>());
 	private Lesson lesson = new Lesson(
-		0,
-		"testLesson",
-		"testlesson.pdf",
-		"testotp"
-	);
+			0,
+			"testLesson",
+			"testlesson.pdf",
+			"testotp");
 
 	@Test
 	void contextLoads() {
@@ -65,24 +84,21 @@ class RestApiWithOutDbApplicationTests {
 	void updateCourseTest() {
 		restControllers.createCourse(course);
 		Course updatedCourse = new Course(
-			course.getId(),
-			"upDatedTestCourse",
-			"upDatedtestDescription",
-			"0 hours",
-			new HashSet<>()
-		);
-
+				course.getId(),
+				"upDatedTestCourse",
+				"upDatedtestDescription",
+				"0 hours",
+				new HashSet<>());
 
 		restControllers.updateCourse(updatedCourse);
 		assertEquals(updatedCourse, restControllers.updateCourse(updatedCourse));
 
 		Course updatedCourse2 = new Course(
-			-1,
-			"upDatedTestCourse",
-			"upDatedtestDescription",
-			"10 hours",
-			new HashSet<>()
-		);
+				-1,
+				"upDatedTestCourse",
+				"upDatedtestDescription",
+				"10 hours",
+				new HashSet<>());
 		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
 			restControllers.updateCourse(updatedCourse2);
 		});
@@ -95,7 +111,7 @@ class RestApiWithOutDbApplicationTests {
 		restControllers.createCourse(course);
 		restControllers.registerUser(student);
 		assertEquals("User successfully added to course",
-			restControllers.addUserToCourse(student.getId(), course.getId()));
+				restControllers.addUserToCourse(student.getId(), course.getId()));
 
 		IllegalArgumentException courseException = assertThrows(IllegalArgumentException.class, () -> {
 			restControllers.addUserToCourse(student.getId(), -1);
@@ -113,7 +129,7 @@ class RestApiWithOutDbApplicationTests {
 	void deleteCourseTest() {
 		restControllers.createCourse(course);
 		assertEquals("delete Successfully",
-			restControllers.deleteCourse(course.getId()));
+				restControllers.deleteCourse(course.getId()));
 
 		IllegalArgumentException courseException = assertThrows(IllegalArgumentException.class, () -> {
 			restControllers.deleteCourse(-1);
@@ -121,26 +137,26 @@ class RestApiWithOutDbApplicationTests {
 		assertEquals("Course not found", courseException.getMessage());
 	}
 
-	//tesing media file adding
+	// tesing media file adding
 	@Test
 	void addMediaFileTest() {
 		restControllers.createCourse(course);
 		assertEquals("Media added Successfully",
-			restControllers.addMediaFile(course.getId(), "testMedia.pdf"));
+				restControllers.addMediaFile(course.getId(), "testMedia.pdf"));
 
 		assertEquals("The course is not exist!",
-			restControllers.addMediaFile(-1, "testMedia.pdf"));
+				restControllers.addMediaFile(-1, "testMedia.pdf"));
 	}
 
-	//tesing lesson adding
+	// tesing lesson adding
 	@Test
 	void addLessonTest() {
 		restControllers.createCourse(course);
 		assertEquals("Lesson added Successfully",
-			restControllers.addLesson(course.getId(), lesson));
+				restControllers.addLesson(course.getId(), lesson));
 
 		assertEquals("The course is not exist!",
-			restControllers.addLesson(-1, lesson));
+				restControllers.addLesson(-1, lesson));
 	}
 
 	// testing attendance
@@ -151,13 +167,13 @@ class RestApiWithOutDbApplicationTests {
 		restControllers.addLesson(course.getId(), lesson);
 
 		assertEquals("Student attended Successfully",
-			restControllers.attendStudent(student.getId(), course.getId(), lesson.getId(), "testotp"));
+				restControllers.attendStudent(student.getId(), course.getId(), lesson.getId(), "testotp"));
 
 		assertEquals("The lesson is not exist or wrong Password!",
-			restControllers.attendStudent(student.getId(), course.getId(), lesson.getId(), "testotp1"));
+				restControllers.attendStudent(student.getId(), course.getId(), lesson.getId(), "testotp1"));
 
 		assertEquals("The lesson is not exist or wrong Password!",
-			restControllers.attendStudent(student.getId(), course.getId(), -1, "testotp"));
+				restControllers.attendStudent(student.getId(), course.getId(), -1, "testotp"));
 
 		IllegalArgumentException courseException = assertThrows(IllegalArgumentException.class, () -> {
 			restControllers.attendStudent(student.getId(), -1, lesson.getId(), "testotp");
