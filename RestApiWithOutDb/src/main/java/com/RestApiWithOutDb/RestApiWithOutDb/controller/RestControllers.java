@@ -231,7 +231,7 @@ public class RestControllers {
     // Add Notification endpoint
     @PostMapping("/notify")
     public String sendNotification(@RequestParam String message, @RequestParam String recipientUsername) {
-        notificationService.addNotification(message, recipientUsername);
+        // notificationService.addNotification(message, recipientUsername);
 
         int messageId = notificationService.addNotification(message, recipientUsername);
         return "Notification sent successfully! Message ID: " + messageId;
