@@ -24,8 +24,6 @@ public class Lesson {
 
     private Set<Users> students;
 
-    
-
     public Lesson(int id, String title, String content, String oTP) {
         this.id = id;
         this.title = title;
@@ -69,13 +67,13 @@ public class Lesson {
     public Set<Users> getStudents() { return students; }
     public void attendStudent(Users student) { this.students.add(student); }
 
-    public Course getCourse() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getCourse'");
-    }
+    // public Course getCourse() {
+    //     // TODO Auto-generated method stub
+    //     throw new UnsupportedOperationException("Unimplemented method 'getCourse'");
+    // }
 
-    public String getUsername() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getUsername'");
-    }
+    // public String getUsername() {
+    //     // TODO Auto-generated method stub
+    //     throw new UnsupportedOperationException("Unimplemented method 'getUsername'");
+    // }
 }

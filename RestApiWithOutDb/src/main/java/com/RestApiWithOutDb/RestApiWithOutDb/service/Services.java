@@ -186,7 +186,7 @@ public class Services {
         Users user = getUserById(userId);
         Course course = getCourseById(courseId);
         for (Lesson lesson : course.getLessons()) {
-            if (lesson.getId() == lessonId && OTP == lesson.getOTP()) {
+            if (lesson.getId() == lessonId && lesson.getOTP().equals(OTP)) {
                 lesson.attendStudent(user);
                 return true;
             }
