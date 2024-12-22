@@ -1,26 +1,23 @@
 package com.RestApiWithOutDb.RestApiWithOutDb.service;
 
-import com.RestApiWithOutDb.RestApiWithOutDb.model.Course;
-import com.RestApiWithOutDb.RestApiWithOutDb.model.Lesson;
-import com.RestApiWithOutDb.RestApiWithOutDb.model.Users;
-import com.RestApiWithOutDb.RestApiWithOutDb.model.Question;
-import com.RestApiWithOutDb.RestApiWithOutDb.model.Quiz;
-import com.RestApiWithOutDb.RestApiWithOutDb.model.Assignment;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import javax.print.attribute.standard.Media;
+import org.springframework.stereotype.Component;
+
+import com.RestApiWithOutDb.RestApiWithOutDb.model.Assignment;
+import com.RestApiWithOutDb.RestApiWithOutDb.model.Course;
+import com.RestApiWithOutDb.RestApiWithOutDb.model.Lesson;
+import com.RestApiWithOutDb.RestApiWithOutDb.model.Question;
+import com.RestApiWithOutDb.RestApiWithOutDb.model.Quiz;
+import com.RestApiWithOutDb.RestApiWithOutDb.model.Users;
 
 @Component
 public class Services {
-    private static int idCounter = 1;
+    private  int idCounter = 1;
+    private  int idCourseCounter = 1;
     private static int lessonCounter = 1;
     private List<Users> userslist = new ArrayList<>();
     private List<Course> courseslist = new ArrayList<>();
@@ -35,7 +32,7 @@ public class Services {
         this.notificationService = notificationService;
         this.emailService = emailservice;
         // Adding default courses
-        courseslist.add(new Course(idCounter++, "Mathematics", "A math course", "36 hours", new HashSet<>()));
+        courseslist.add(new Course(idCourseCounter++, "Mathematics", "A math course", "36 hours", new HashSet<>()));
 
         // Adding default users
         userslist.add(new Users(idCounter++, "john_doe", "password123", "student", "john@example.com",
