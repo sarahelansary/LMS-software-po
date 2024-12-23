@@ -272,9 +272,20 @@ public class RestControllers {
 
     // Grade assignment
     @PostMapping("/gradeAssignment")
-    public String gradeAssignment(@RequestParam Integer assignmentId, @RequestParam Integer grade, @RequestParam String feedback) {
-        return services.gradeAssignment(assignmentId, grade, feedback);
+    public ResponseEntity<String> gradeAssignment(
+        @RequestParam Integer assignmentId,
+        @RequestParam Integer grade,
+        @RequestParam String feedback,
+        @RequestParam Integer studentId) {
+    Users student = services.getUserById(studentId);
+    if (student == null) {
+        return ResponseEntity.status(404).body("Student not found");
     }
+
+    String response = services.gradeAssignment(assignmentId, student, grade, feedback);
+    return ResponseEntity.ok(response);  
+}
+
 
     // Get all quizzes
     @GetMapping("/getAllQuizzes")
