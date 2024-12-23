@@ -3,11 +3,11 @@ package com.RestApiWithOutDb.RestApiWithOutDb.model;
 public class Question {
     private Integer id;
     private String questionText;
-    private String type;  // Question type: MCQ, True/False, etc.
-    private String[] options; // Options for MCQs
+    private String type;  
+    private String[] options; 
     private String correctAnswer;
 
-    // Getters and setters
+    
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 
