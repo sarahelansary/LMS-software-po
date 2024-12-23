@@ -275,15 +275,19 @@ public class Services {
     
 
     // Grade assignment
-    public String gradeAssignment(Integer assignmentId, Integer grade, String feedback) {
-        Assignment assignment = getAssignmentById(assignmentId);
-        if (assignment != null) {
-            assignment.setGrade(grade);  
-            assignment.setFeedback(feedback);  
-            return "Assignment graded successfully";
-        }
-        return "Assignment not found";
+    public String gradeAssignment(Integer assignmentId, Users student, Integer grade, String feedback) {
+ 
+    Assignment assignment = getAssignmentById(assignmentId);
+    if (assignment != null) {
+
+        assignment.setGrade(grade);
+        assignment.setFeedback(feedback);
+
+        return "Assignment graded successfully for student: " + student.getUsername();
     }
+    return "Assignment not found";
+}
+
 
     // Get assignment by ID
     public Assignment getAssignmentById(Integer assignmentId) {
