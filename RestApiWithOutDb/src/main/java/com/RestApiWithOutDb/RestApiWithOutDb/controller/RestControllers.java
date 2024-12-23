@@ -258,6 +258,23 @@ public class RestControllers {
         return services.createQuiz(quiz);
     }
 
+
+    @GetMapping("/createRandomizedQuiz/{quizId}/{numberOfQuestions}")
+    public ResponseEntity<Quiz> createRandomizedQuiz(@PathVariable Integer quizId, 
+                                                     @PathVariable int numberOfQuestions) {
+        Quiz quiz ;
+
+        try {
+            // Randomize the quiz by selecting the specified number of random questions
+            quiz = services.createRandomizedQuiz(quizId, numberOfQuestions);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);  // If there are not enough questions
+        }
+
+        // Return the randomized quiz
+        return ResponseEntity.ok(quiz);
+    }
+
     // Add question to a quiz
     @PostMapping("/addQuestionToQuiz")
     public String addQuestionToQuiz(@RequestParam Integer quizId, @RequestBody Question question) {
