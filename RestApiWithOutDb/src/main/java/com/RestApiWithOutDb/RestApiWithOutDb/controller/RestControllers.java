@@ -9,6 +9,7 @@ import com.RestApiWithOutDb.RestApiWithOutDb.service.NotificationService;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Question;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Quiz;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Assignment;
+import com.RestApiWithOutDb.RestApiWithOutDb.model.Attendance;
 import com.RestApiWithOutDb.RestApiWithOutDb.service.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -265,15 +266,13 @@ public class RestControllers {
 
     // Submit assignment
     @PostMapping("/submitAssignment")
-    public String submitAssignment(@RequestParam Integer studentId, @RequestParam Integer courseId,
-            @RequestParam String fileUrl) {
+    public String submitAssignment(@RequestParam Integer studentId, @RequestParam Integer courseId, @RequestParam String fileUrl) {
         return services.submitAssignment(studentId, courseId, fileUrl);
     }
 
     // Grade assignment
     @PostMapping("/gradeAssignment")
-    public String gradeAssignment(@RequestParam Integer assignmentId, @RequestParam Integer grade,
-            @RequestParam String feedback) {
+    public String gradeAssignment(@RequestParam Integer assignmentId, @RequestParam Integer grade, @RequestParam String feedback) {
         return services.gradeAssignment(assignmentId, grade, feedback);
     }
 
@@ -284,9 +283,44 @@ public class RestControllers {
     }
 
     // Get all assignments
-    // @GetMapping("/getAllAssignments")
-    // public List<Assignment> getAllAssignments() {
-    // return services.getAllAssignments();
-    // }
+     @GetMapping("/getAllAssignments")
+    public List<Assignment> getAllAssignments() {
+        return services.getAllAssignments();
+    }
+
+     
+//submitQuizScore
+    @PostMapping("/submitQuizScore")
+    public ResponseEntity<String> submitQuizScore(
+            @RequestParam Integer quizId,
+            @RequestParam Integer studentId,
+            @RequestParam Integer score) {
+        Users std = services.getUserById(studentId);
+        if(std == null)
+        {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("student not found");
+        }
+        Quiz quiz = services.getQuizById(quizId);
+        if(quiz== null)
+        {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("quiz not found");
+        }
+        String response = services.submitQuizScore(quizId, std, score);
+        return ResponseEntity.ok(response);
+    }
+//markAttendance
+    @PostMapping("/markAttendance")
+    public ResponseEntity<String> markAttendance(
+            @RequestParam Integer studentId,
+            @RequestParam Integer courseId,
+            @RequestParam Boolean isPresent) {
+        String response = services.markAttendance(studentId, courseId, isPresent);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/getAllAttendance")
+    public List<Attendance> getAllAttendance() {
+        return services.getAllAttendance();
+    }
 
 }
