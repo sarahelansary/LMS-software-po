@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
-
+import java.util.ArrayList;
 @Data
 @Getter
 @Setter
@@ -15,9 +15,13 @@ public class Quiz {
     private Integer id;
     private String title;
     private Course course;
-    private List<Question> questions;  // List of questions in the quiz
+    private List<Question> questions;  
+    private List<StudentQuizScore> studentScores;
 
-     public Integer getId() { return id; }
+    public Quiz(){
+        this.studentScores = new ArrayList<>();
+    }
+    public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 
     public String getTitle() { return title; }
@@ -28,4 +32,8 @@ public class Quiz {
 
     public List<Question> getQuestions() { return questions; }
     public void setQuestions(List<Question> questions) { this.questions = questions; }
+
+    public List<StudentQuizScore> getStudentScores() { return studentScores; }
+    public void setStudentScores(List<StudentQuizScore> studentScores) { this.studentScores = studentScores; }
+
 }
