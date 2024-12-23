@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Assignment;
+import com.RestApiWithOutDb.RestApiWithOutDb.model.Attendance;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Course;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Lesson;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Question;
@@ -19,11 +20,13 @@ public class Services {
     private  int idCounter = 1;
     private  int idCourseCounter = 1;
     private static int lessonCounter = 1;
+    private static int assignmentidCounter = 1;
     private List<Users> userslist = new ArrayList<>();
     private List<Course> courseslist = new ArrayList<>();
     private List<Quiz> quizList = new ArrayList<>();
 
     private List<Assignment> assignmentList = new ArrayList<>();
+    private List<Attendance> attendanceList = new ArrayList<>();
 
     private NotificationService notificationService;
     private EmailService emailService;
@@ -205,11 +208,11 @@ public class Services {
         return "Quiz successfully created";
     }
 
-    // Add questions to quiz (simple for this example)
+    //addQuestionToQuiz
     public String addQuestionToQuiz(Integer quizId, Question question) {
-        Quiz quiz = getQuizById(quizId); // Get quiz by ID
+        Quiz quiz = getQuizById(quizId); 
         if (quiz != null) {
-            quiz.getQuestions().add(question);
+            quiz.getQuestions().add(question);  
             return "Question added to quiz";
         }
         return "Quiz not found";
@@ -224,31 +227,59 @@ public class Services {
         }
         throw new IllegalArgumentException("Quiz not found");
     }
+//Feedback
+    private String generateFeedback(Integer score) {
+    if (score >= 90) {
+        return "Excellent work!";
+    } else if (score >= 75) {
+        return "Good job";
+    } else if (score >= 50) {
+        return "You passed";
+    } else {
+        return "You did not pass.";
+    }
+}
+
+    // quiz score
+    public String submitQuizScore(Integer quizId, Users student, Integer score) {
+        Quiz quiz = getQuizById(quizId);
+        if (quiz != null) {
+            StudentQuizScore studentScore = new StudentQuizScore();
+            studentScore.setStudent(student);
+            studentScore.setScore(score);
+            String feedback = generateFeedback(score);
+            studentScore.setFeedback(feedback);
+            quiz.getStudentScores().add(studentScore);
+            return "Score successfully recorded";
+        }
+        return "Quiz not found";
+    }
 
     // Submit assignment
     public String submitAssignment(Integer studentId, Integer courseId, String fileUrl) {
-        Users student = getUserById(studentId); // Get student by ID
-        Course course = getCourseById(courseId); // Get course by ID
+        Users student = getUserById(studentId);
+        Course course = getCourseById(courseId);
 
         if (student != null && course != null) {
-            // Create a new Assignment using the constructor you defined
-            Assignment assignment = new Assignment(idCounter++, "Assignment Title", course, student, fileUrl, "", 0,
-                    null);
-            assignmentList.add(assignment); // Add the assignment to the list
-            emailService.sendEmail(student.getEmail(), "assignment",
-                    "You submiited your assignment for course: ." + courseId);
-
+            Assignment assignment = new Assignment();
+            assignment.setId(assignmentidCounter++); 
+            assignment.setStudent(student);
+            assignment.setCourse(course);
+            assignment.setFileUrl(fileUrl);
+            assignment.setSubmissionDate(new java.util.Date());  
+            assignmentList.add(assignment);
             return "Assignment submitted successfully";
         }
         return "Student or Course not found";
     }
+    
 
     // Grade assignment
     public String gradeAssignment(Integer assignmentId, Integer grade, String feedback) {
         Assignment assignment = getAssignmentById(assignmentId);
         if (assignment != null) {
-            assignment.setGrade(grade);
-            assignment.setFeedback(feedback);
+            assignment.setGrade(grade);  
+            assignment.setFeedback(feedback);  
             return "Assignment graded successfully";
         }
         return "Assignment not found";
@@ -256,16 +287,49 @@ public class Services {
 
     // Get assignment by ID
     public Assignment getAssignmentById(Integer assignmentId) {
+        if (assignmentId == null) {
+            return null;  
+        }
         for (Assignment assignment : assignmentList) {
-            if (assignment.getId().equals(assignmentId)) {
-                return assignment;
+            if (assignment.getId() != null && assignment.getId().equals(assignmentId)) {
+                return assignment;  
             }
         }
-        throw new IllegalArgumentException("Assignment not found");
+        return null;  
     }
 
+    // Track attendance
+    public String markAttendance(Integer studentId, Integer courseId, Boolean isPresent) {
+        Users student = getUserById(studentId);
+        Course course = getCourseById(courseId);
+
+        if (student != null && course != null) {
+            Attendance attendance = new Attendance();
+            attendance.setStudent(student);
+            attendance.setCourse(course);
+            attendance.setIsPresent(isPresent);
+            attendance.setAttendanceDate(new java.util.Date());  
+            attendanceList.add(attendance);
+            return "Attendance marked successfully";
+        }
+        return "Student or Course not found";
+    }
+
+   
     public List<Quiz> getAllQuizzes() {
-        return quizList; // Return the list of package com.RestApiWithOutDb.RestApiWithOutDb.service;
+        return quizList;  
+    }
+
+    public List<Assignment> getAllAssignments() {
+        return assignmentList;  
+    }
+
+    public List<Attendance> getAllAttendance() {
+        return attendanceList;
+    }
+    
+    public Users getUserById2(int id) {
+        return new Users(id, "john_doe", "password123", "student", "john@example.com", null);
     }
 
 }
