@@ -3,6 +3,7 @@ package com.RestApiWithOutDb.RestApiWithOutDb.service;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Optional;
 
 import org.springframework.stereotype.Component;
@@ -207,6 +208,33 @@ public class Services {
         quiz.setId(idCounter++);
         quizList.add(quiz);
         return "Quiz successfully created";
+    }
+
+    public Quiz createRandomizedQuiz(Integer quizId, int numberOfRandomQuestions) {
+        
+        Quiz quiz = getQuizById(quizId);
+        List<Question> questions = quiz.getQuestions();
+        // Ensure there are enough questions to select from
+        if (questions.size() < numberOfRandomQuestions) {
+            throw new IllegalArgumentException("Not enough questions available for the requested random selection.");
+        }
+        
+        List<Question> randomQuestions = new ArrayList<>();
+        Random random = new Random();
+        
+        List<Integer> selectedIndexes = new ArrayList<>();
+        
+        while (randomQuestions.size() < numberOfRandomQuestions) {
+            int randomIndex = random.nextInt(questions.size());  // Generate a random index
+            
+            
+            if (!selectedIndexes.contains(randomIndex)) {
+                randomQuestions.add(questions.get(randomIndex));  
+                selectedIndexes.add(randomIndex);  
+            }
+        }
+        quiz.setQuestions(randomQuestions);
+         return quiz;
     }
 
     //addQuestionToQuiz
