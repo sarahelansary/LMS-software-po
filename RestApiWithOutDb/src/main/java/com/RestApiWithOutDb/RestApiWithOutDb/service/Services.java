@@ -88,6 +88,25 @@ public class Services {
 
     }
 
+    public String removeUserFromCourse(Integer userId, Integer courseId) {
+        Users user = getUserById(userId);
+        Course course = getCourseById(courseId);
+
+        if (user != null && course != null && course.getStudents().contains(userId)) {
+            course.getStudents().remove(userId);
+            user.getCourses().remove(courseId);
+
+            notificationService.addNotification(
+                    "You have been removed from the course: " + course.getName(),
+                    user.getUsername());
+            emailService.sendEmail(user.getEmail(), "Course Enrollment", "You have been removed from the course.");
+            return "User successfully removed from course";
+        } else {
+            return "User or course not found";
+        }
+
+    }
+
     public Course getCourseById(Integer courseId) {
         for (Course course : courseslist) {
             if (course.getId().equals(courseId)) {

@@ -134,6 +134,14 @@ public class RestControllers {
         return services.addUserToCourse(userId, courseId);
     }
 
+    // Assign a user to a course
+    @PreAuthorize("hasAnyRole('INSTRUCTOR')")
+    @PostMapping("/reomveUserFromCourse")
+    public String removeUserFromCourse(@RequestParam Integer userId, @RequestParam Integer courseId) {
+        return services.removeUserFromCourse(userId, courseId);
+    }
+
+
     @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUCTOR')")
     @DeleteMapping("/deleteCourse")
     public String deleteCourse(@RequestParam int id) {

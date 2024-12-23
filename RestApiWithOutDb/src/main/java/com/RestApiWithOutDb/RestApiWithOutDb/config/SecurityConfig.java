@@ -78,6 +78,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/{courseId}/addLesson").hasAnyRole("ADMIN", "INSTRUCTOR")
                         .requestMatchers("/api/attentStudent").hasRole("STUDENT")
                         .requestMatchers("/api/getAllLesson").permitAll()
+                        .requestMatchers("/api/removeUserFromCourse").hasRole("INSTRUCTOR")
 
                         .anyRequest().authenticated()  // All other requests need to be authenticated
                 )
