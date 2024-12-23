@@ -127,4 +127,17 @@ public class NotificationTest {
         assertEquals("Notification sent successfully! Message ID: " + messageId, response);
         verify(notificationService, times(1)).addNotification(message, instructorUsername);
     }
+    @Test
+    public void testSendNotificationToStudentWithGrade() {
+        String message = "Your grade for the course is A.";
+        String studentUsername = "studentUser";
+        int messageId = 7;
+
+        when(notificationService.addNotification(message, studentUsername)).thenReturn(messageId);
+
+        String response = restControllers.sendNotification(message, studentUsername);
+
+        assertEquals("Notification sent successfully! Message ID: " + messageId, response);
+        verify(notificationService, times(1)).addNotification(message, studentUsername);
+    }
 }

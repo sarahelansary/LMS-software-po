@@ -13,6 +13,7 @@ import com.RestApiWithOutDb.RestApiWithOutDb.model.Course;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Lesson;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Question;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Quiz;
+import com.RestApiWithOutDb.RestApiWithOutDb.model.StudentQuizScore;
 import com.RestApiWithOutDb.RestApiWithOutDb.model.Users;
 
 @Component

@@ -283,9 +283,13 @@ public class RestControllers {
     }
 
     String response = services.gradeAssignment(assignmentId, student, grade, feedback);
+    
+    // Notify student about the grade
+    notificationService.addNotification("Your assignment has been graded. Grade: " + grade + ". Feedback: " + feedback, student.getUsername());
+    
     return ResponseEntity.ok(response);  
 }
-
+    
 
     // Get all quizzes
     @GetMapping("/getAllQuizzes")
