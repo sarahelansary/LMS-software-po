@@ -1,9 +1,6 @@
 package com.RestApiWithOutDb.RestApiWithOutDb.model;
 
 
-import com.RestApiWithOutDb.RestApiWithOutDb.model.Course;
-import com.RestApiWithOutDb.RestApiWithOutDb.model.Users;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -12,7 +9,6 @@ import java.util.Date;
 @Data
 @Getter
 @Setter
-@AllArgsConstructor
 public class Assignment {
     private Integer id;
     private String title;
@@ -25,7 +21,6 @@ public class Assignment {
 
   
     
-    // Getters and setters
      public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 
